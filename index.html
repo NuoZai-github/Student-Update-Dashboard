@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Progress Dashboard</title>
+    <meta name="description" content="Dashboard for tracking student progress and generating update prompts for parents.">
+    <link rel="stylesheet" href="styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <i class="ph ph-student"></i>
+                <h2>EduDash</h2>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <i class="ph ph-squares-four"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="ph ph-users"></i>
+                    <span>Students</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="ph ph-file-text"></i>
+                    <span>Templates</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="ph ph-gear"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+
+            <div class="recent-students-container">
+                <h3>Recent Drafts</h3>
+                <ul class="recent-list" id="recentDraftsList">
+                    <!-- Populated by JS -->
+                </ul>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="header-titles">
+                    <h1>Student Progress Tracker</h1>
+                    <p>Generate parent update prompts instantly.</p>
+                </div>
+            </header>
+
+            <div class="content-grid">
+                <!-- Data Input Card -->
+                <div class="card input-card">
+                    <div class="card-header">
+                        <i class="ph ph-pencil-simple"></i>
+                        <h2>Student Information</h2>
+                    </div>
+                    <form id="progressForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="studentName">Student Name</label>
+                                <input type="text" id="studentName" placeholder="e.g. Alex Johnson" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="subject">Subject / Course</label>
+                                <input type="text" id="subject" placeholder="e.g. Math, Coding" required>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="grade">Current Grade / Status</label>
+                                <input type="text" id="grade" placeholder="e.g. A-, 85%, Making steady progress">
+                            </div>
+                            <div class="form-group">
+                                <label for="tone">Preferred Tone</label>
+                                <select id="tone">
+                                    <option value="Professional & Encouraging">Professional & Encouraging</option>
+                                    <option value="Constructive & Direct">Constructive & Direct</option>
+                                    <option value="Warm & Friendly">Warm & Friendly</option>
+                                    <option value="Urgent (Needs attention)">Urgent (Needs attention)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="achievements">Key Achievements / Positives</label>
+                            <textarea id="achievements" rows="3" placeholder="What has the student done well recently?"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="improvements">Areas for Improvement</label>
+                            <textarea id="improvements" rows="3" placeholder="Where does the student need to focus?"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="extraNotes">Extra Notes for AI (Optional)</label>
+                            <textarea id="extraNotes" rows="2" placeholder="e.g. Mention the upcoming midterm exam."></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-primary">
+                            <i class="ph ph-magic-wand"></i>
+                            Generate Prompt
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Output Card -->
+                <div class="card output-card">
+                    <div class="card-header">
+                        <i class="ph ph-sparkle"></i>
+                        <h2>Generated AI Prompt</h2>
+                    </div>
+                    
+                    <div class="output-container">
+                        <div class="empty-state" id="outputEmptyState">
+                            <i class="ph ph-robot"></i>
+                            <p>Fill out the form and click generate to create a prompt.</p>
+                        </div>
+                        
+                        <div class="result-state hidden" id="outputResultState">
+                            <p class="instruction-text">Copy this prompt and paste it into ChatGPT, Claude, or your preferred AI to generate the parent update.</p>
+                            <div class="prompt-box">
+                                <textarea id="generatedPrompt" readonly></textarea>
+                            </div>
+                            <div class="output-actions">
+                                <button type="button" class="btn-secondary" id="copyBtn">
+                                    <i class="ph ph-copy"></i>
+                                    Copy Prompt
+                                </button>
+                                <div class="copy-feedback hidden" id="copyFeedback">Copied to clipboard!</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
