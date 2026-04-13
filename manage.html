@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Data - Student Progress</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/img/logo.gif" alt="Chumbaka Logo" class="sidebar-logo">
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="ph ph-squares-four"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="students.html" class="nav-item">
+                    <i class="ph ph-users"></i>
+                    <span>Student List</span>
+                </a>
+                <a href="manage.html" class="nav-item active">
+                    <i class="ph ph-database"></i>
+                    <span>Manage Data</span>
+                </a>
+            </nav>
+
+            <div class="recent-students-container">
+                <!-- Kept empty or uniform to the design -->
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="header-titles">
+                    <h1>Manage Database</h1>
+                    <p>Add new students, courses, or progress statuses to your system.</p>
+                </div>
+            </header>
+
+            <div class="content-grid" style="max-width: 1000px; grid-template-columns: 1fr 1fr 1fr; display: grid;">
+                
+                <!-- Add Student Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="ph ph-user-plus"></i>
+                        <h2>Add Student</h2>
+                    </div>
+                    <form id="addStudentForm">
+                        <div class="form-group">
+                            <label for="newStudentName">Student Name</label>
+                            <input type="text" id="newStudentName" placeholder="e.g. Alex Johnson" required>
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="ph ph-plus"></i> Add Student
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Add Course Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="ph ph-book-bookmark"></i>
+                        <h2>Add Course</h2>
+                    </div>
+                    <form id="addCourseForm">
+                        <div class="form-group">
+                            <label for="newCourseName">Course / Subject Name</label>
+                            <input type="text" id="newCourseName" placeholder="e.g. Robotics" required>
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="ph ph-plus"></i> Add Course
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Add Grade/Status Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="ph ph-chart-line-up"></i>
+                        <h2>Add Grade / Status</h2>
+                    </div>
+                    <form id="addGradeForm">
+                        <div class="form-group">
+                            <label for="newGradeName">Grade or Status Level</label>
+                            <input type="text" id="newGradeName" placeholder="e.g. Making steady progress" required>
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="ph ph-plus"></i> Add Status
+                        </button>
+                    </form>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/manage.js"></script>
+</body>
+</html>

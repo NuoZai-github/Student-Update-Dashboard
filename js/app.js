@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Initialize Supabase
+    const supabaseUrl = 'https://elcizzczflunmjuyfhvq.supabase.co';
+    const supabaseKey = 'sb_publishable_LRHrxxr8BewhV5VacNfk0w_rBqPCS5S';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
     // Form and input elements
     const form = document.getElementById('progressForm');
     const studentNameInput = document.getElementById('studentName');

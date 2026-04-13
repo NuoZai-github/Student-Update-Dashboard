@@ -22,15 +22,18 @@
             </div>
             
             <nav class="sidebar-nav">
-                <a href="#" class="nav-item active">
+                <a href="index.html" class="nav-item active">
                     <i class="ph ph-squares-four"></i>
                     <span>Dashboard</span>
                 </a>
-                <a href="#" class="nav-item">
+                <a href="students.html" class="nav-item">
                     <i class="ph ph-users"></i>
-                    <span>Students</span>
+                    <span>Student List</span>
                 </a>
-
+                <a href="manage.html" class="nav-item">
+                    <i class="ph ph-database"></i>
+                    <span>Manage Data</span>
+                </a>
             </nav>
 
             <div class="recent-students-container">
@@ -61,18 +64,27 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="studentName">Student Name</label>
-                                <input type="text" id="studentName" placeholder="e.g. Alex Johnson" required>
+                                <select id="studentName" required>
+                                    <option value="" disabled selected>Select a student...</option>
+                                    <!-- Options will be loaded from database -->
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="subject">Subject / Course</label>
-                                <input type="text" id="subject" placeholder="e.g. Math, Coding" required>
+                                <select id="subject" required>
+                                    <option value="" disabled selected>Select a subject...</option>
+                                    <!-- Options will be loaded from database -->
+                                </select>
                             </div>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="grade">Current Grade / Status</label>
-                                <input type="text" id="grade" placeholder="e.g. A-, 85%, Making steady progress">
+                                <select id="grade" required>
+                                    <option value="" disabled selected>Select status...</option>
+                                    <!-- Options will be loaded from database -->
+                                </select>
                             </div>
                             <div class="form-group">
                                 <label for="tone">Preferred Tone</label>
@@ -102,7 +114,7 @@
 
                         <button type="submit" class="btn-primary">
                             <i class="ph ph-magic-wand"></i>
-                            Generate Prompt
+                            Generate Prompt and Update
                         </button>
                     </form>
                 </div>
@@ -139,6 +151,8 @@
         </main>
     </div>
 
+    <!-- Supabase SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

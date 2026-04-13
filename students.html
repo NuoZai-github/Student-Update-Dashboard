@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student List - Student Progress</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <img src="assets/img/logo.gif" alt="Chumbaka Logo" class="sidebar-logo">
+            </div>
+            
+            <nav class="sidebar-nav">
+                <a href="index.html" class="nav-item">
+                    <i class="ph ph-squares-four"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="students.html" class="nav-item active">
+                    <i class="ph ph-users"></i>
+                    <span>Student List</span>
+                </a>
+                <a href="manage.html" class="nav-item">
+                    <i class="ph ph-database"></i>
+                    <span>Manage Data</span>
+                </a>
+            </nav>
+
+            <div class="recent-students-container">
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <div class="header-titles">
+                    <h1>Student Roster</h1>
+                    <p>View detailed information and past updates for all students.</p>
+                </div>
+            </header>
+
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Active Courses</th>
+                            <th>Latest Status</th>
+                            <th>Last Updated</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="studentListBody">
+                        <!-- Data will be populated from database -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
