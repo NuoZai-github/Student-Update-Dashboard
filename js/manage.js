@@ -44,9 +44,13 @@ document.addEventListener('DOMContentLoaded', () => {
             if (error) {
                 console.error(`Error deleting from ${tableName}:`, error);
                 alert('Failed to delete item.');
+            } else {
+                // Immediate local feedback
+                row.remove();
             }
-            // Note: UI will be updated by Realtime listener
         });
+
+
 
         tableBody.prepend(row);
     };
