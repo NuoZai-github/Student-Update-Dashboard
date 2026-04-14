@@ -15,13 +15,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const extraNotesInput = document.getElementById('extraNotes');
 
     // Helper to add option if it doesn't exist
-    function addUniqueOption(selectElement, value, text) {
+    function addUniqueOption(selectElement, value, text, id = null) {
         // Check if option already exists
         const existingOptions = Array.from(selectElement.options);
-        if (existingOptions.some(opt => opt.value === value)) return;
+        // If id is provided, we use it as value for easier database matching
+        const actualValue = id || value;
+        if (existingOptions.some(opt => opt.value === actualValue)) return;
 
         const option = document.createElement('option');
-        option.value = value;
+        option.value = actualValue;
         option.textContent = text;
         selectElement.appendChild(option);
     }
@@ -36,9 +38,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Fetch Students
             const { data: students, error: studentError } = await supabase
-
                 .from('students')
-                .select('name')
+                .select('id, name')
                 .order('name', { ascending: true });
             
             if (studentError) throw studentError;
@@ -59,8 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (milestoneError) throw milestoneError;
 
-            // Populate Student Dropdown
-            students.forEach(student => addUniqueOption(studentNameInput, student.name, student.name));
+            // Populate Student Dropdown (Using ID as value)
+            students.forEach(student => addUniqueOption(studentNameInput, student.name, student.name, student.id));
 
             // Populate Subject Dropdown
             courses.forEach(course => addUniqueOption(subjectInput, course.name, course.name));
@@ -72,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Error loading data from Supabase:', error);
         }
     }
+
 
     // Helper to remove option
     function removeOption(selectElement, value) {
@@ -138,33 +140,63 @@ document.addEventListener('DOMContentLoaded', () => {
     let recentDrafts = [];
 
     // Handle form submission
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
         e.preventDefault();
+        const submitBtn = e.target.querySelector('button');
+        const originalBtnText = submitBtn.innerHTML;
 
         // Get values
-        const name = studentNameInput.value.trim();
-        const subject = subjectInput.value.trim();
-        const grade = gradeInput.value.trim();
+        const studentId = studentNameInput.value;
+        const studentName = studentNameInput.options[studentNameInput.selectedIndex].text;
+        const subject = subjectInput.value;
+        const grade = gradeInput.value;
         const tone = toneSelect.value;
         const achievements = achievementsInput.value.trim();
         const improvements = improvementsInput.value.trim();
         const extraNotes = extraNotesInput.value.trim();
 
-        // Generate the prompt
-        const promptText = generatePrompt({
-            name, subject, grade, tone, achievements, improvements, extraNotes
-        });
+        // Save progress to Supabase
+        submitBtn.innerHTML = '<i class="ph ph-circle-notch animate-spin"></i> Updating...';
+        submitBtn.disabled = true;
 
-        // Display the prompt
-        generatedPrompt.value = promptText;
-        
-        // Toggle view
-        outputEmptyState.classList.add('hidden');
-        outputResultState.classList.remove('hidden');
+        try {
+            // Update student record
+            const { error } = await supabase
+                .from('students')
+                .update({
+                    course_name: subject,
+                    current_progress: grade,
+                    special_notes: `Achievements: ${achievements}\nImprovements: ${improvements}\nNotes: ${extraNotes}`,
+                    created_at: new Date().toISOString() // Update the timestamp
+                })
+                .eq('id', studentId);
 
-        // Add to history
-        addDraftToHistory(name, subject, promptText);
+            if (error) throw error;
+
+            // Generate the prompt
+            const promptText = generatePrompt({
+                name: studentName, subject, grade, tone, achievements, improvements, extraNotes
+            });
+
+            // Display the prompt
+            generatedPrompt.value = promptText;
+            
+            // Toggle view
+            outputEmptyState.classList.add('hidden');
+            outputResultState.classList.remove('hidden');
+
+            // Add to history
+            addDraftToHistory(studentName, subject, promptText);
+
+        } catch (error) {
+            console.error('Error updating student info:', error);
+            alert('Failed to update student history in database.');
+        } finally {
+            submitBtn.innerHTML = originalBtnText;
+            submitBtn.disabled = false;
+        }
     });
+
 
     // Generate prompt function
     function generatePrompt(data) {

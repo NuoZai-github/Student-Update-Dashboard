@@ -519,3 +519,70 @@ select {
     transform: scale(0.9);
 }
 
+/* Student List Table Styles */
+.student-info-cell {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.student-avatar {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.status-good {
+    background: #ecfdf5;
+    color: #059669;
+}
+
+.status-average {
+    background: #fffbeb;
+    color: #d97706;
+}
+
+.status-needs {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.status-new {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.btn-action {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    color: #64748b;
+    padding: 4px;
+    transition: all 0.2s ease;
+}
+
+.btn-action:hover {
+    color: #6366f1;
+    transform: scale(1.1);
+}
+
+.btn-action.delete-student:hover {
+    color: #ef4444;
+}
+
+
