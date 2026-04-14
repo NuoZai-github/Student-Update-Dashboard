@@ -14,6 +14,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const addGradeForm = document.getElementById('addGradeForm');
     const newGradeNameInput = document.getElementById('newGradeName');
 
+    // Table Bodies
+    const studentsTableBody = document.querySelector('#studentsTable tbody');
+    const coursesTableBody = document.querySelector('#coursesTable tbody');
+    const gradesTableBody = document.querySelector('#gradesTable tbody');
+
+    // Helper to add row to table
+    const addTableRow = (tableBody, text) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td>${text}</td>`;
+        tableBody.prepend(row); // Add new ones to the top
+    };
+
+    // Load initial data
+    const loadAllData = async () => {
+        // Load Students
+        const { data: students } = await supabase.from('students').select('name').order('created_at', { ascending: false });
+        if (students) students.forEach(s => addTableRow(studentsTableBody, s.name));
+
+        // Load Courses
+        const { data: courses } = await supabase.from('courses').select('name').order('created_at', { ascending: false });
+        if (courses) courses.forEach(c => addTableRow(coursesTableBody, c.name));
+
+        // Load Milestones
+        const { data: milestones } = await supabase.from('progress_milestones').select('label').order('created_at', { ascending: false });
+        if (milestones) milestones.forEach(m => addTableRow(gradesTableBody, m.label));
+    };
+
+    // Initial load
+    loadAllData();
+
+    // Set up Realtime for tables
+    supabase
+        .channel('manage-changes')
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'students' }, payload => {
+            addTableRow(studentsTableBody, payload.new.name);
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'courses' }, payload => {
+            addTableRow(coursesTableBody, payload.new.name);
+        })
+        .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'progress_milestones' }, payload => {
+            addTableRow(gradesTableBody, payload.new.label);
+        })
+        .subscribe();
+
+
     // UI Feedback Helper
     const showFeedback = (button, message, isSuccess = true) => {
         const originalText = button.innerHTML;
