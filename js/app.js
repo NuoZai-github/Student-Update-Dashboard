@@ -14,6 +14,81 @@ document.addEventListener('DOMContentLoaded', () => {
     const improvementsInput = document.getElementById('improvements');
     const extraNotesInput = document.getElementById('extraNotes');
 
+    // Helper to add option if it doesn't exist
+    function addUniqueOption(selectElement, value, text) {
+        // Check if option already exists
+        const existingOptions = Array.from(selectElement.options);
+        if (existingOptions.some(opt => opt.value === value)) return;
+
+        const option = document.createElement('option');
+        option.value = value;
+        option.textContent = text;
+        selectElement.appendChild(option);
+    }
+
+    // Load data from Supabase
+    async function loadDataFromSupabase() {
+        try {
+            // Fetch Students
+            const { data: students, error: studentError } = await supabase
+                .from('students')
+                .select('name')
+                .order('name', { ascending: true });
+            
+            if (studentError) throw studentError;
+
+            // Fetch Courses
+            const { data: courses, error: courseError } = await supabase
+                .from('courses')
+                .select('name')
+                .order('name', { ascending: true });
+            
+            if (courseError) throw courseError;
+
+            // Fetch Grades/Milestones
+            const { data: milestones, error: milestoneError } = await supabase
+                .from('progress_milestones')
+                .select('label')
+                .order('label', { ascending: true });
+            
+            if (milestoneError) throw milestoneError;
+
+            // Populate Student Dropdown
+            students.forEach(student => addUniqueOption(studentNameInput, student.name, student.name));
+
+            // Populate Subject Dropdown
+            courses.forEach(course => addUniqueOption(subjectInput, course.name, course.name));
+
+            // Populate Grade Dropdown
+            milestones.forEach(ms => addUniqueOption(gradeInput, ms.label, ms.label));
+
+        } catch (error) {
+            console.error('Error loading data from Supabase:', error);
+        }
+    }
+
+    // Set up Realtime subscriptions
+    function setupRealtime() {
+        supabase
+            .channel('db-changes')
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'students' }, payload => {
+                addUniqueOption(studentNameInput, payload.new.name, payload.new.name);
+            })
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'courses' }, payload => {
+                addUniqueOption(subjectInput, payload.new.name, payload.new.name);
+            })
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'progress_milestones' }, payload => {
+                addUniqueOption(gradeInput, payload.new.label, payload.new.label);
+            })
+            .subscribe();
+    }
+
+    // Initialize data and realtime
+    loadDataFromSupabase();
+    setupRealtime();
+
+
+
     // Output elements
     const outputEmptyState = document.getElementById('outputEmptyState');
     const outputResultState = document.getElementById('outputResultState');
