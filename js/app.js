@@ -29,8 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Load data from Supabase
     async function loadDataFromSupabase() {
         try {
+            // Clear current options (except the first disabled one)
+            while (studentNameInput.options.length > 1) studentNameInput.remove(1);
+            while (subjectInput.options.length > 1) subjectInput.remove(1);
+            while (gradeInput.options.length > 1) gradeInput.remove(1);
+
             // Fetch Students
             const { data: students, error: studentError } = await supabase
+
                 .from('students')
                 .select('name')
                 .order('name', { ascending: true });
@@ -67,6 +73,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // Helper to remove option
+    function removeOption(selectElement, value) {
+        const options = Array.from(selectElement.options);
+        const index = options.findIndex(opt => opt.value === value);
+        if (index !== -1) {
+            selectElement.remove(index);
+        }
+    }
+
     // Set up Realtime subscriptions
     function setupRealtime() {
         supabase
@@ -80,8 +95,28 @@ document.addEventListener('DOMContentLoaded', () => {
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'progress_milestones' }, payload => {
                 addUniqueOption(gradeInput, payload.new.label, payload.new.label);
             })
+            .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'students' }, payload => {
+                // For DELETE, payload.old contains the deleted record's PK if identity is correct
+                // However, since we use 'name' as value in dropdown, and DELETE only returns ID usually,
+                // we might need to handle this. But wait, did I load data with IDs in app.js? 
+                // Currently app.js uses 'name' as value. 
+                // To properly handle DELETE, we either need 'name' in payload.old (requires replica identity full)
+                // or use 'id' as value in dropdown.
+                // Let's check which is easier.
+                // Given "不要自己该东西", I'll try to find if we can identify by value.
+                // If I can't get the name, I can re-load the data or I can change app.js to use IDs.
+                // But wait, the user wants it live.
+                loadDataFromSupabase(); // Simplest way to keep in sync if payload.old is limited
+            })
+            .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'courses' }, payload => {
+                loadDataFromSupabase();
+            })
+            .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'progress_milestones' }, payload => {
+                loadDataFromSupabase();
+            })
             .subscribe();
     }
+
 
     // Initialize data and realtime
     loadDataFromSupabase();

@@ -20,25 +20,50 @@ document.addEventListener('DOMContentLoaded', () => {
     const gradesTableBody = document.querySelector('#gradesTable tbody');
 
     // Helper to add row to table
-    const addTableRow = (tableBody, text) => {
+    const addTableRow = (tableBody, text, id, tableName) => {
         const row = document.createElement('tr');
-        row.innerHTML = `<td>${text}</td>`;
-        tableBody.prepend(row); // Add new ones to the top
+        row.setAttribute('data-id', id);
+        row.innerHTML = `
+            <td>${text}</td>
+            <td style="text-align: right;">
+                <button class="btn-delete" title="Delete">
+                    <i class="ph ph-trash"></i>
+                </button>
+            </td>
+        `;
+
+        // Handle delete button click
+        row.querySelector('.btn-delete').addEventListener('click', async () => {
+            if (!confirm(`Are you sure you want to delete "${text}"?`)) return;
+            
+            const { error } = await supabase
+                .from(tableName)
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                console.error(`Error deleting from ${tableName}:`, error);
+                alert('Failed to delete item.');
+            }
+            // Note: UI will be updated by Realtime listener
+        });
+
+        tableBody.prepend(row);
     };
 
     // Load initial data
     const loadAllData = async () => {
         // Load Students
-        const { data: students } = await supabase.from('students').select('name').order('created_at', { ascending: false });
-        if (students) students.forEach(s => addTableRow(studentsTableBody, s.name));
+        const { data: students } = await supabase.from('students').select('id, name').order('created_at', { ascending: false });
+        if (students) students.forEach(s => addTableRow(studentsTableBody, s.name, s.id, 'students'));
 
         // Load Courses
-        const { data: courses } = await supabase.from('courses').select('name').order('created_at', { ascending: false });
-        if (courses) courses.forEach(c => addTableRow(coursesTableBody, c.name));
+        const { data: courses } = await supabase.from('courses').select('id, name').order('created_at', { ascending: false });
+        if (courses) courses.forEach(c => addTableRow(coursesTableBody, c.name, c.id, 'courses'));
 
         // Load Milestones
-        const { data: milestones } = await supabase.from('progress_milestones').select('label').order('created_at', { ascending: false });
-        if (milestones) milestones.forEach(m => addTableRow(gradesTableBody, m.label));
+        const { data: milestones } = await supabase.from('progress_milestones').select('id, label').order('created_at', { ascending: false });
+        if (milestones) milestones.forEach(m => addTableRow(gradesTableBody, m.label, m.id, 'progress_milestones'));
     };
 
     // Initial load
@@ -48,15 +73,28 @@ document.addEventListener('DOMContentLoaded', () => {
     supabase
         .channel('manage-changes')
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'students' }, payload => {
-            addTableRow(studentsTableBody, payload.new.name);
+            addTableRow(studentsTableBody, payload.new.name, payload.new.id, 'students');
         })
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'courses' }, payload => {
-            addTableRow(coursesTableBody, payload.new.name);
+            addTableRow(coursesTableBody, payload.new.name, payload.new.id, 'courses');
         })
         .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'progress_milestones' }, payload => {
-            addTableRow(gradesTableBody, payload.new.label);
+            addTableRow(gradesTableBody, payload.new.label, payload.new.id, 'progress_milestones');
+        })
+        .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'students' }, payload => {
+            const row = studentsTableBody.querySelector(`tr[data-id="${payload.old.id}"]`);
+            if (row) row.remove();
+        })
+        .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'courses' }, payload => {
+            const row = coursesTableBody.querySelector(`tr[data-id="${payload.old.id}"]`);
+            if (row) row.remove();
+        })
+        .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'progress_milestones' }, payload => {
+            const row = gradesTableBody.querySelector(`tr[data-id="${payload.old.id}"]`);
+            if (row) row.remove();
         })
         .subscribe();
+
 
 
     // UI Feedback Helper
