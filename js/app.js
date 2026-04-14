@@ -89,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
         supabase
             .channel('db-changes')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'students' }, payload => {
-                addUniqueOption(studentNameInput, payload.new.name, payload.new.name);
+                addUniqueOption(studentNameInput, payload.new.name, payload.new.name, payload.new.id);
             })
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'courses' }, payload => {
                 addUniqueOption(subjectInput, payload.new.name, payload.new.name);
@@ -97,6 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'progress_milestones' }, payload => {
                 addUniqueOption(gradeInput, payload.new.label, payload.new.label);
             })
+
             .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'students' }, payload => {
                 // For DELETE, payload.old contains the deleted record's PK if identity is correct
                 // However, since we use 'name' as value in dropdown, and DELETE only returns ID usually,

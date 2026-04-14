@@ -1,7 +1,11 @@
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Supabase is already initialized insupabase.js
+    // Initialize Supabase
+    const supabaseUrl = 'https://elcizzczflunmjuyfhvq.supabase.co';
+    const supabaseKey = 'sb_publishable_LRHrxxr8BewhV5VacNfk0w_rBqPCS5S';
+    const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+
     const studentListBody = document.getElementById('studentListBody');
+
 
     async function loadStudents() {
         try {
