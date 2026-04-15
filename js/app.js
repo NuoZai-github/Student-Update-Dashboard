@@ -161,6 +161,19 @@ document.addEventListener('DOMContentLoaded', () => {
         submitBtn.disabled = true;
 
         try {
+            // Fetch the student's CURRENT record to compare grade & course
+            const { data: currentStudent, error: fetchError } = await supabase
+                .from('students')
+                .select('course_name, current_progress')
+                .eq('id', studentId)
+                .single();
+
+            if (fetchError) throw fetchError;
+
+            // Detect changes
+            const gradeChanged = !currentStudent.current_progress || currentStudent.current_progress !== grade;
+            const courseChanged = !currentStudent.course_name || currentStudent.course_name !== subject;
+
             // Update student record
             const { error } = await supabase
                 .from('students')
@@ -174,9 +187,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (error) throw error;
 
-            // Generate the prompt
+            // Generate the prompt with change detection
             const promptText = generatePrompt({
-                name: studentName, subject, grade, tone, achievements, improvements, extraNotes
+                name: studentName, subject, grade, tone, achievements, improvements, extraNotes,
+                gradeChanged, courseChanged
             });
 
             // Display the prompt
@@ -201,30 +215,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Generate prompt function
     function generatePrompt(data) {
-        let prompt = `Act as an expert educator and write a progress update message to the parents of my student, ${data.name}. `;
-        
-        prompt += `The tone of the message should be ${data.tone}. Please make it sound empathetic, professional, and clear.\n\n`;
-        
-        prompt += `Here are the details to include:\n`;
-        prompt += `- Subject: ${data.subject}\n`;
-        
-        if (data.grade) {
-            prompt += `- Current Progress/Grade: ${data.grade}\n`;
-        }
-        
-        if (data.achievements) {
-            prompt += `- Key Achievements: ${data.achievements}\n`;
-        }
-        
-        if (data.improvements) {
-            prompt += `- Areas for Improvement: ${data.improvements}\n`;
-        }
-        
-        if (data.extraNotes) {
-            prompt += `\nAdditional context to include or address:\n- ${data.extraNotes}\n`;
+        let prompt = `Write a short WhatsApp message from a teacher to a parent about their child ${data.name}'s progress. `;
+
+        prompt += `The tone should be ${data.tone}. `;
+        prompt += `Use appropriate emojis naturally throughout the message. `;
+        prompt += `Keep it conversational and human — avoid sounding robotic or overly formal. `;
+        prompt += `Do NOT use "Dear Parent" or formal letter structure. Start with a casual greeting like "Hi" or "Hello". `;
+        prompt += `End naturally without a formal sign-off — just use something like "Thank you!" or "Feel free to reach out 😊".\n\n`;
+
+        prompt += `Details:\n`;
+        prompt += `- Student: ${data.name}\n`;
+
+        // Only include course if it changed
+        if (data.courseChanged) {
+            prompt += `- Subject (NEW): ${data.subject}\n`;
+        } else {
+            prompt += `- Subject: ${data.subject}\n`;
         }
 
-        prompt += `\nPlease structure it clearly with a professional greeting and closing (leave placeholders for my name).`;
+        // Only include grade if it changed
+        if (data.gradeChanged && data.grade) {
+            prompt += `- Current Progress (UPDATED): ${data.grade}\n`;
+        }
+
+        if (data.achievements) {
+            prompt += `- What they did well: ${data.achievements}\n`;
+        }
+
+        if (data.improvements) {
+            prompt += `- Areas to work on: ${data.improvements}\n`;
+        }
+
+        if (data.extraNotes) {
+            prompt += `- Additional info: ${data.extraNotes}\n`;
+        }
+
+        prompt += `\nIMPORTANT: This is a WhatsApp message, so keep it concise and natural. Do not write an essay. Use line breaks to keep it readable on mobile.`;
 
         return prompt;
     }

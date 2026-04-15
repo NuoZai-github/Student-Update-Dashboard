@@ -49,54 +49,54 @@
                 </div>
             </header>
 
-            <div class="content-grid" style="max-width: 1000px; grid-template-columns: 1fr 1fr 1fr; display: grid;">
+            <div class="manage-cards-row">
                 
                 <!-- Add Student Card -->
-                <div class="card">
+                <div class="card manage-card">
                     <div class="card-header">
                         <i class="ph ph-user-plus"></i>
                         <h2>Add Student</h2>
                     </div>
-                    <form id="addStudentForm">
+                    <form id="addStudentForm" class="manage-form">
                         <div class="form-group">
                             <label for="newStudentName">Student Name</label>
                             <input type="text" id="newStudentName" placeholder="e.g. Alex Johnson" required>
                         </div>
-                        <button type="submit" class="btn-primary">
+                        <button type="submit" class="btn-primary manage-btn">
                             <i class="ph ph-plus"></i> Add Student
                         </button>
                     </form>
                 </div>
 
                 <!-- Add Course Card -->
-                <div class="card">
+                <div class="card manage-card">
                     <div class="card-header">
                         <i class="ph ph-book-bookmark"></i>
                         <h2>Add Course</h2>
                     </div>
-                    <form id="addCourseForm">
+                    <form id="addCourseForm" class="manage-form">
                         <div class="form-group">
                             <label for="newCourseName">Course / Subject Name</label>
                             <input type="text" id="newCourseName" placeholder="e.g. Robotics" required>
                         </div>
-                        <button type="submit" class="btn-primary">
+                        <button type="submit" class="btn-primary manage-btn">
                             <i class="ph ph-plus"></i> Add Course
                         </button>
                     </form>
                 </div>
 
                 <!-- Add Grade/Status Card -->
-                <div class="card">
+                <div class="card manage-card">
                     <div class="card-header">
                         <i class="ph ph-chart-line-up"></i>
                         <h2>Add Grade / Status</h2>
                     </div>
-                    <form id="addGradeForm">
+                    <form id="addGradeForm" class="manage-form">
                         <div class="form-group">
                             <label for="newGradeName">Grade or Status Level</label>
                             <input type="text" id="newGradeName" placeholder="e.g. Making steady progress" required>
                         </div>
-                        <button type="submit" class="btn-primary">
+                        <button type="submit" class="btn-primary manage-btn">
                             <i class="ph ph-plus"></i> Add Status
                         </button>
                     </form>
@@ -104,7 +104,7 @@
 
             </div>
 
-            <div class="content-grid" style="max-width: 1000px; grid-template-columns: 1fr 1fr 1fr; display: grid; margin-top: 32px; gap: 32px;">
+            <div class="manage-cards-row" style="margin-top: 32px;">
                 <!-- Student List Table -->
                 <div class="card" style="padding: 24px;">
                     <div class="card-header" style="margin-bottom: 16px;">

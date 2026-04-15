@@ -585,4 +585,34 @@ select {
     color: #ef4444;
 }
 
+/* === Manage Data Page === */
+.manage-cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+    max-width: 1000px;
+    width: 100%;
+}
+
+.manage-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.manage-form {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.manage-form .form-group {
+    flex-grow: 1;
+}
+
+.manage-btn {
+    margin-top: auto;
+    padding: 14px 20px;
+    font-size: 14px;
+    white-space: nowrap;
+}
 
